@@ -1,0 +1,59 @@
+{% extends "header.html" %}
+{% block content %}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+            <div class="p-5 border-0">
+                <div class="text-center mb-4">
+                    <img src="https://via.placeholder.com/150" alt="User Photo" class="rounded-circle" style="width: 150px; height: 150px;">
+                </div>
+                <h2 class="text-center mb-4">Update Your Profile</h2>
+                <form>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="firstName" placeholder="First Name">
+                                <label for="firstName"><i class="fas fa-user"></i> First Name</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="lastName" placeholder="Last Name">
+                                <label for="lastName"><i class="fas fa-user"></i> Last Name</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-floating">
+                            <input type="email" class="form-control" id="email" placeholder="Email">
+                            <label for="email"><i class="fas fa-envelope"></i> Email</label>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="mobile" placeholder="Mobile">
+                            <label for="mobile"><i class="fas fa-phone"></i> Mobile</label>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-floating">
+                            <textarea class="form-control" id="address" placeholder="Address" style="height: 100px;"></textarea>
+                            <label for="address"><i class="fas fa-map-marker-alt"></i> Address</label>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="profileImage" class="form-label"><i class="fas fa-image"></i> Profile Image</label>
+                        <input class="form-control" type="file" id="profileImage">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg w-100"><i class="fas fa-user-plus"></i> Register</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}
