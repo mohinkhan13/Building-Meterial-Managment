@@ -6,56 +6,63 @@
         <div class="col-md-7">
             <div class="p-5 border-0">
                 <h2 class="text-center mb-4">Create Your Account</h2>
-                <form>
+                {% if error %}
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                  <strong>Error!</strong> {{error}}
+                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endif %}
+                <form method="POST" action="{% url 'register' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="firstName" placeholder="First Name">
+                                <input name="fname" type="text" class="form-control" id="firstName" placeholder="First Name">
                                 <label for="firstName"><i class="fas fa-user"></i> First Name</label>
                             </div>
                         </div>
                         <div class="col-md-6 mb-3">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="lastName" placeholder="Last Name">
+                                <input name="lname" type="text" class="form-control" id="lastName" placeholder="Last Name">
                                 <label for="lastName"><i class="fas fa-user"></i> Last Name</label>
                             </div>
                         </div>
                     </div>
                     <div class="mb-3">
                         <div class="form-floating">
-                            <input type="email" class="form-control" id="email" placeholder="Email">
+                            <input name="email" type="email" class="form-control" id="email" placeholder="Email">
                             <label for="email"><i class="fas fa-envelope"></i> Email</label>
                         </div>
                     </div>
                     <div class="mb-3">
                         <div class="form-floating">
-                            <input type="text" class="form-control" id="mobile" placeholder="Mobile">
+                            <input name="mobile" type="text" class="form-control" id="mobile" placeholder="Mobile">
                             <label for="mobile"><i class="fas fa-phone"></i> Mobile</label>
                         </div>
                     </div>
                     <div class="mb-3">
                         <div class="form-floating">
-                            <textarea class="form-control" id="address" placeholder="Address" style="height: 100px;"></textarea>
+                            <textarea name="address" class="form-control" id="address" placeholder="Address" style="height: 100px;"></textarea>
                             <label for="address"><i class="fas fa-map-marker-alt"></i> Address</label>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <div class="form-floating">
-                                <input type="password" class="form-control" id="password" placeholder="Password">
+                                <input name="password" type="password" class="form-control" id="password" placeholder="Password">
                                 <label for="password"><i class="fas fa-lock"></i> Password</label>
                             </div>
                         </div>
                         <div class="col-md-6 mb-3">
                             <div class="form-floating">
-                                <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm Password">
+                                <input name="cpassword" type="password" class="form-control" id="confirmPassword" placeholder="Confirm Password">
                                 <label for="confirmPassword"><i class="fas fa-lock"></i> Confirm Password</label>
                             </div>
                         </div>
                     </div>
                     <div class="mb-4">
                         <label for="profileImage" class="form-label"><i class="fas fa-image"></i> Profile Image</label>
-                        <input class="form-control" type="file" id="profileImage">
+                        <input name="profile_picture" class="form-control" type="file" id="profileImage">
                     </div>
                     <button type="submit" class="btn btn-primary btn-lg w-100"><i class="fas fa-user-plus"></i> Register</button>
                 </form>
