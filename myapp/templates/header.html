@@ -24,7 +24,7 @@
                         <a class="nav-link" href="/">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Products</a>
+                        <a class="nav-link" href="{% url "products" %}">Products</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url "contact" %}">Contact Us</a>
@@ -69,10 +69,9 @@
                 <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
                     <h5 class="footer-heading">Quick Links</h5>
                     <ul class="list-unstyled footer-links">
-                        <li><a href="#">Home</a></li>
-                        <li><a href="#">Products</a></li>
-                        <li><a href="#">Contact Us</a></li>
-                        <li><a href="#">FAQs</a></li>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="{% url "products" %}">Products</a></li>
+                        <li><a href="{% url "contact" %}">Contact Us</a></li>                    
                     </ul>
                 </div>
                 <div class="col-lg-3 col-md-6 mb-4 mb-md-0">

@@ -87,10 +87,12 @@
     object-fit: cover;
 }
 .hero {
+    margin-top: 80px;
     position: relative;
     height: 100vh; /* Full viewport height */
-    background: url('https://via.placeholder.com/1920x1080') no-repeat center center/cover;
+    background: url('/static/img/hero_2.jpg') no-repeat center center/cover;
     display: flex;
+    background-attachment: fixed;
     align-items: center;
     justify-content: center;
     overflow: hidden;
@@ -286,12 +288,41 @@ position: relative;
 /* ******************************************* */
 /* ******************************************* */
 
-/*            Regitration For CSS */
+/*            Product Card CSS */
 
 /* ******************************************* */
 /* ******************************************* */
 
-
+.product-card {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: box-shadow 0.3s ease;
+}
+.product-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+.product-card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+.product-card .card-body {
+    padding: 20px;
+}
+.product-card .btn {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+}
+.product-card .btn:hover {
+    background-color: #0056b3;
+}
+.product-card .price {
+    color: #007bff;
+    font-weight: bold;
+}
 
 
 
