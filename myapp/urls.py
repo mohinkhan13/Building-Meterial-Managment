@@ -10,5 +10,7 @@ urlpatterns = [
     path('change-password', change_password , name='change-password'),
     path('user-profile', user_profile , name='user-profile'),
     path('products/', products , name='products'),
+    path('otp/', otp , name='otp'),
+    path('new-password', new_password, name="new-password")
     
 ]

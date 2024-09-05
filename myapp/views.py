@@ -1,7 +1,10 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.hashers import make_password, check_password
+from django.core.mail import send_mail
+from django.conf import settings
 from .models import User
-# Create your views here.
+import random
+import requests
 
 
 def index(request):
@@ -74,8 +77,118 @@ def login(request):
 
 
 def forgot_password(request):
-    return render(request, 'forgot-password.html')
+    if request.method == 'POST':
+        email_or_mobile = request.POST.get('email_or_mobile').strip()  # Ensure no leading/trailing spaces    
 
+        try:
+            # Attempt to find user by email or mobile
+            user_by_email = User.objects.filter(email=email_or_mobile).first()
+            user_by_mobile = User.objects.filter(mobile=email_or_mobile).first()
+
+            if user_by_email:
+                user = user_by_email
+            elif user_by_mobile:
+                user = user_by_mobile
+            else:
+                # If neither email nor mobile found
+                error = "Email or Mobile Number not found. Please enter valid details."
+                return render(request, 'forgot-password.html', {'error': error})
+
+            # Generate OTP
+            otp = random.randint(100000, 999999)
+            request.session['otp'] = otp
+            request.session['email_or_mobile'] = email_or_mobile
+
+            if user.email == email_or_mobile:
+                # Send OTP via email
+                send_mail(
+                    'Your OTP Code',
+                    f'Your OTP code is {otp}. It is valid for 2 minutes.',
+                    settings.DEFAULT_FROM_EMAIL,
+                    [user.email]
+                )
+                msg = "OTP has been sent successfully to your email."                    
+
+            elif user.mobile == email_or_mobile:
+                # Send OTP via SMS
+                mobile = str(email_or_mobile)
+                otp = str(random.randint(100000, 999999))
+                url = "https://www.fast2sms.com/dev/bulkV2"
+                querystring = {
+                    "authorization": "TIjv2PHxGFWfdeUqrO5VmSB6MY7Rcnh93ioDutwk0ZaspJAb8QXURP07NkDjvS6HEZVtBCF8MdbYs2n9",  # Replace with your actual API key
+                    "variables_values": otp,
+                    "route": "otp",
+                    "numbers": mobile
+                }
+                headers = {'cache-control': "no-cache"}
+                response = requests.request("GET", url, headers=headers, params=querystring)
+
+                if response.status_code == 200:
+                    msg = "OTP has been sent successfully to your Mobile."
+                else:
+                    msg = f"Failed to send OTP. API response: {response.text}"
+
+            return render(request, 'otp.html', {'msg': msg})
+
+        except Exception as e:
+            error = f"An error occurred: {str(e)}"
+            return render(request, 'forgot-password.html', {'error': error})
+
+    else:
+        return render(request, 'forgot-password.html')
+
+
+def otp(request):
+    otp1 = int(request.session.get('otp'))
+    otp2 = int(request.POST.get('otp'))
+
+    if otp1 is None:
+        error = "OTP has expired or is invalid."
+        return render(request, 'otp.html', {'error': error})
+
+    if otp1 == otp2:
+        del request.session['otp']
+        return redirect('new-password')
+    else:
+        error = "OTP does not match."
+        return render(request, 'otp.html', {'error': error})
+
+def new_password(request):
+    new_password = request.POST.get('new_password')
+    cnew_password = request.POST.get('cnew_password')
+
+    if new_password and cnew_password:
+        if new_password == cnew_password:
+            try:
+                # Find the user by email or mobile, whichever was used
+                user = User.objects.filter(email=request.session['email_or_mobile']).first()
+                if not user:
+                    user = User.objects.filter(mobile=request.session['email_or_mobile']).first()
+                
+                # Ensure the user exists
+                if user:
+                    # Hash the new password and save it
+                    user.password = make_password(new_password)
+                    user.save()
+
+                    # Clear session
+                    del request.session['email_or_mobile']
+                    
+                    msg = "Password Change Successfully"
+                    return render(request,'login.html', {'msg':msg})
+                else:
+                    error = "User Not Found"
+                    return render(request, 'new-password.html', {'error': error})
+            
+            except Exception as e:
+                error = f"An error occurred: {str(e)}"
+                return render(request, 'new-password.html', {'error': error})
+        else:
+            msg = 'Password And Confirm Password Do Not Match'
+            return render(request, 'new-password.html', {'msg': msg})
+    else:
+        error = "Both password fields are required."
+        return render(request, 'new-password.html', {'error': error})
 
 def change_password(request):
     if request.method == 'POST':

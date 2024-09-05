@@ -1,3 +1,10 @@
+form input:focus, 
+form textarea:focus, 
+form select:focus {
+            outline: none !important;
+            border-color: black !important;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1) !important;
+        }
 .navbar {
     background-color: #ffffff;
     padding: 0.75rem 1.25rem;
@@ -87,7 +94,6 @@
     object-fit: cover;
 }
 .hero {
-    margin-top: 80px;
     position: relative;
     height: 100vh; /* Full viewport height */
     background: url('/static/img/hero_2.jpg') no-repeat center center/cover;
