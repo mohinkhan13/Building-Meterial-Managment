@@ -1,0 +1,109 @@
+{% extends "header.html" %}
+{% load static %}
+{% block content %}
+
+<div class="container py-5">
+    <h1 class="text-center mb-5 fw-bold">Your Wishlist <i class="fas fa-heart text-danger"></i></h1>
+
+    <!-- Check if there are wishlist items -->
+    {% if wishlist_items %}
+        <div class="wishlist-container">
+            <!-- Loop through the wishlist items -->
+            {% for item in wishlist_items %}
+            <div class="wishlist-item mb-4 p-4 rounded shadow-sm bg-white d-flex align-items-center justify-content-between">
+                <div class="wishlist-image-wrapper position-relative">
+                    <a href="{% url 'product-view' item.product.id %}" class="text-decoration-none text-dark">
+                        <img src="{{ item.product.featured_image.image.url }}" class="wishlist-image rounded" alt="Product Image" style="height: 150px; width: 150px; object-fit: cover; transition: all 0.4s ease;">
+                    </a>
+                    <!-- New wishlist icon (filled heart) on the product image -->
+                    <span class="wishlist-icon position-absolute top-0 end-0 m-2 text-danger"><i class="fas fa-heart"></i></span>
+                </div>
+
+                <div class="wishlist-details ms-4 flex-grow-1">
+                    <h4 class="fw-bold mb-2">{{ item.product.product_name }}</h4>
+                    <p class="text-muted">{{ item.product.short_description|truncatechars:80 }}</p>
+                    <div class="d-flex align-items-center mt-3">
+                        <span class="badge bg-success text-white px-3 py-2">₹{{ item.product.product_price }}</span>
+                        <span class="text-secondary me-2 px-3 py-2"><s>₹{{ item.product.highlighted_price }}</s></span>
+                    </div>
+                </div>
+
+                <div class="wishlist-actions text-center">
+                    <!-- Remove from Wishlist Button with trash icon -->
+                    <form method="POST" action="{% url 'remove-from-wishlist' item.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-danger rounded-pill px-4 py-2 mb-2">
+                            <i class="fas fa-trash-alt me-2"></i> Remove
+                        </button>
+                    </form>
+
+                    <!-- Move to Cart Button with shopping cart icon -->
+                    <!-- Currently disabled as action is not created -->
+                    <form method="POST" action="#">
+                        {% csrf_token %}
+                        <button type="button" class="btn btn-primary rounded-pill px-4 py-2 disabled">
+                            <i class="fas fa-shopping-cart me-2"></i> Move to Cart
+                        </button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center">
+            <h4>Your wishlist is empty!</h4>
+            <a href="{% url 'products' %}" class="btn btn-primary mt-3 rounded-pill px-4 py-2">
+                <i class="fas fa-shopping-bag me-2"></i> Continue Shopping
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Custom Styles -->
+<style>
+    .wishlist-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px;
+        background-color: white;
+        border-radius: 15px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .wishlist-item:hover {
+/*        transform: scale(1.03);*/
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    }
+    .wishlist-image-wrapper {
+        flex-shrink: 0;
+        position: relative;
+    }
+    .wishlist-icon {
+        font-size: 1.5rem;
+        color: #dc3545;
+        transition: transform 0.3s ease;
+    }
+    .wishlist-image {
+        border-radius: 10px;
+        transition: transform 0.3s ease;
+    }
+    .wishlist-image:hover {
+/*        transform: scale(1.1);*/
+        opacity: 0.9;
+    }
+    .wishlist-icon:hover {
+        transform: scale(1.2);
+    }
+    .btn {
+        transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+    .btn:hover {
+        transform: translateY(-2px);
+    }
+    .btn i {
+        margin-right: 5px;
+    }
+</style>
+
+{% endblock %}

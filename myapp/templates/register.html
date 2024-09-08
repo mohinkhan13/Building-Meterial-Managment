@@ -15,6 +15,15 @@
                 <form method="POST" action="{% url 'register' %}" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="row">
+                        <div class="mb-3">
+                            <div class="form-floating">
+                                <select class="form-select" id="accountType" name="usertype">
+                                    <option value="buyer">Buyer</option>
+                                    <option value="seller">Seller</option>
+                                </select>
+                                <label for="accountType">Account Type</label>
+                            </div>
+                        </div>
                         <div class="col-md-6 mb-3">
                             <div class="form-floating">
                                 <input name="fname" type="text" class="form-control" id="firstName" placeholder="First Name">

@@ -8,7 +8,7 @@
         <div class="hero-content">
             <h1>Build Your Dream Home</h1>
             <p>Quality materials for the best construction experience.</p>
-            <a href="#" class="btn btn-lg">Shop Now</a>
+            <a href="{% url 'products' %}" class="btn btn-lg">Shop Now</a>
         </div>
     </section>
 
@@ -47,94 +47,26 @@
             <h2 class="text-center mb-5">Our Top Products</h2>
             <div class="row">
                 <!-- Product 1 -->
+                {% for p in products %}
                 <div class="col-md-3 mb-4">
+                    <a style="text-decoration: none;" href="{% url 'product-view' p.id %}">
                     <div class="card">
-                        <img src="{% static "img/hero_3.jpg" %}" class="card-img-top" alt="Product Name">
+                        <img src="{{p.featured_image.image.url}}" class="card-img-top" alt="Product Name">
                         <div class="heart-icon">
-                            <i class="far fa-heart"></i> <!-- Empty heart icon -->
+                            <a href="{% url 'add-to-wishlist' p.id%}"><i class="far fa-heart"></i></a>
                         </div>
                         <div class="card-body">
-                            <h5 class="card-title">Product Name</h5>
-                            <p class="card-text">Explore the best quality materials available at competitive prices.</p>
+                            <h5 class="card-title">{{p.product_name}}</h5>
                             <div class="d-flex justify-content-between align-items-center">
-                                <span class="price">$99.99</span>
-                                <a href="#" class="btn btn-outline-primary">View Details</a>
+                                <span class="price">&#8377;{{ p.product_price|floatformat:0 }} <s class="text-secondary">{{ p.highlighted_price|floatformat:0 }}</s></span>                                
                             </div>
                         </div>
                     </div>
-                </div>
-                <!-- Product 2 -->
-                <div class="col-md-3 mb-4">
-                    <div class="card">
-                        <img src="{% static "img/hero_3.jpg" %}" class="card-img-top" alt="Product Name">
-                        <div class="heart-icon">
-                            <i class="far fa-heart"></i> <!-- Empty heart icon -->
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">Product Name</h5>
-                            <p class="card-text">Explore the best quality materials available at competitive prices.</p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="price">$99.99</span>
-                                <a href="#" class="btn btn-outline-primary">View Details</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Product 3 -->
-                <div class="col-md-3 mb-4">
-                    <div class="card">
-                        <img src="{% static "img/hero_3.jpg" %}" class="card-img-top" alt="Product Name">
-                        <div class="heart-icon">
-                            <i class="far fa-heart"></i> <!-- Empty heart icon -->
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">Product Name</h5>
-                            <p class="card-text">Explore the best quality materials available at competitive prices.</p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="price">$99.99</span>
-                                <a href="#" class="btn btn-outline-primary">View Details</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Product 4 -->
-                <div class="col-md-3 mb-4">
-                    <div class="card">
-                        <img src="{% static "img/hero_3.jpg" %}" class="card-img-top" alt="Product Name">
-                        <div class="heart-icon">
-                            <i class="far fa-heart"></i> <!-- Empty heart icon -->
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">Product Name</h5>
-                            <p class="card-text">Explore the best quality materials available at competitive prices.</p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="price">$99.99</span>
-                                <a href="#" class="btn btn-outline-primary">View Details</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>                
+                </a>
+                </div> 
+                {% endfor %}           
             </div>
-            <!-- Pagination -->
-            <nav>
-                <ul class="pagination">
-                    <li class="page-item disabled">
-                        <span class="page-link">Previous</span>
-                    </li>
-                    <li class="page-item active" aria-current="page">
-                        <span class="page-link">1</span>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="#">2</a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="#">3</a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="#">Next</a>
-                    </li>
-                </ul>
-            </nav>
+            
         </div>
     </section>
     <!-- Testimonial Section -->

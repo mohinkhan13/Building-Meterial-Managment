@@ -1,0 +1,63 @@
+{% extends 'header.html' %}
+{% load static %}
+{% block content %}
+<style type="text/css">
+    .card:hover{
+        scale: none;
+    }
+</style>
+    <div class="container mt-5 mb-5">
+        <h2 class="text-center mb-4">Order Details</h2>
+        <div class="card shadow-sm">
+            <div class="card-header bg-info text-white">
+                <h4>Order ID: {{ order.id }}</h4>
+                <p>Order Date: {{ order.created_at }}</p>
+                <p>Total Amount: ₹{{ order.total_amount }}</p>
+                <p>Status: <span class="badge {% if order.status == 'paid' %}bg-success{% else %}bg-warning{% endif %}">
+                    {{ order.status }}</span>
+                </p>
+            </div>
+            <div class="card-body">
+                <h5 class="mb-4">Ordered Items</h5>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Product Image</th>
+                                <th>Product Name</th>
+                                <th>Quantity</th>
+                                <th>Price per Item</th>
+                                <th>Total Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in order.items.all %}
+                            <tr>
+                                <td>
+                                    <img src="{{ item.product.featured_image.image.url }}" alt="{{ item.product.name }}" class="img-thumbnail" style="max-width: 100px;">
+                                </td>
+                                <td>{{ item.product.product_name }}</td>
+                                <td>{{ item.product_qty }}</td>
+                                <td>₹{{ item.product_price }}</td>
+                                <td>₹{{ item.total_price }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <hr>
+                <h5 class="mt-4">Shipping Address</h5>
+                <p>{{ order.address }}</p>
+
+                <!-- <h5 class="mt-4">Payment Method</h5>
+                <p>{{ order.payment_method }}</p>
+
+                <h5 class="mt-4">Order Notes</h5>
+                <p>{{ order.notes }}</p> -->
+
+                <a href="{% url 'products' %}" class="btn btn-primary mt-4">Continue Shopping</a>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,158 @@
+{% extends 'header.html' %}
+{% block content %}
+{% load static %}
+
+<!-- Breadcrumb Begin -->
+<div class="breadcrumb-option py-3">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/"><i class="fa fa-home"></i> Home</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Cart</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+<!-- Breadcrumb End -->
+
+<!-- Shop Cart Section Begin -->
+<section class="shop-cart py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                {% if carts %}
+                <div class="table-responsive">
+                    <table class="table table-hover table-bordered">
+                        <thead class="table-light text-center">
+                            <tr>
+                                <th scope="col">Product</th>
+                                <th scope="col">Price</th>
+                                <th class="w-25">Quantity</th>
+                                <th scope="col">Total</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for c in carts %}
+                            <tr>
+                                <td class="d-flex align-items-center">
+                                    <img src="{{c.product.featured_image.image.url}}" alt="{{c.product.product_name}}" class="img-fluid rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
+                                    <div class="ms-3">
+                                        <h6 class="mb-1">{{c.product.product_name}}</h6>
+                                    </div>
+                                </td>
+                                <td class="text-center">₹ {{c.product.product_price}}</td>
+                                <td>
+                                    <form method="post" action="{% url 'change-qty' %}">
+                                        {% csrf_token %}
+                                        <div class="input-group">
+                                            <button type="button" class="btn btn-outline-secondary" onclick="decrementQty({{ forloop.counter0 }})">-</button>
+                                            <input type="text" name="product_qty" value="{{ c.product_qty }}" class="form-control text-center" id="product_qty_{{ forloop.counter0 }}" onchange="this.form.submit();">
+                                            <input type="hidden" name="cid" value="{{ c.id }}">
+                                            <button type="button" class="btn btn-outline-secondary" onclick="incrementQty({{ forloop.counter0 }})">+</button>
+                                        </div>
+                                    </form>
+                                </td>
+                                <td class="text-center">₹ {{c.total_price}}</td>
+                                <td class="text-center">
+                                    <a href="{% url 'remove-cart' id=c.product.id %}" class="btn btn-outline-danger" title="Remove from cart">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center">
+                    <h4 class="mb-4">No Products in Cart Yet! Please Add Products</h4>
+                    <a href="{% url 'products' %}" class="btn btn-primary">Continue Shopping</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% if carts %}
+        <div class="row mt-4">
+            <div class="col-lg-4 offset-lg-4">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Cart Total</h5>
+                        <ul class="list-unstyled mb-4">
+                            <li class="d-flex justify-content-between">
+                                <span>Subtotal</span>
+                                <strong>₹ {{net_price}}</strong>
+                            </li>
+                            <li class="d-flex justify-content-between">
+                                <span>Total</span>
+                                <strong>₹ {{net_price}}</strong>
+                            </li>
+                        </ul>
+                        <form method="post" action="">
+                            {% csrf_token %}
+                            <input type="hidden" id="net_price" name="amount" value="{{net_price}}">
+                            <button type="button" class="btn btn-success w-100" id="checkout-button">
+                                <i class="fas fa-credit-card me-2"></i> Checkout
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+<!-- Shop Cart Section End -->
+
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+    var stripe = Stripe('pk_test_51MshH6SJuXwPfjjrrgxJ5tubbOgYAhRrqNcd4RDUSq1peWpIMZrjhIiTncSUWO9u6byeDf4KxdZPkFD4hU55mVOg00aRL5RT8x');
+    var checkoutButton = document.getElementById('checkout-button');
+
+    checkoutButton.addEventListener('click', function() {
+        fetch('/create-checkout-session/', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                'post_data': '{{net_price}}'
+            })
+        })
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(session) {
+            return stripe.redirectToCheckout({ sessionId: session.id });
+        })
+        .then(function(result) {
+            if (result.error) {
+                alert(result.error.message);
+            }
+        })
+        .catch(function(error) {
+            console.error('Error:', error);
+        });
+    });
+
+    function decrementQty(index) {
+        var qtyInput = document.getElementById('product_qty_' + index);
+        var qty = parseInt(qtyInput.value);
+        if (qty > 1) {
+            qtyInput.value = qty - 1;
+            qtyInput.form.submit();
+        }
+    }
+
+    function incrementQty(index) {
+        var qtyInput = document.getElementById('product_qty_' + index);
+        var qty = parseInt(qtyInput.value);
+        if (qty < 10) {
+            qtyInput.value = qty + 1;
+            qtyInput.form.submit();
+        }
+    }
+</script>
+{% endblock %}

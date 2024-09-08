@@ -1,0 +1,318 @@
+{% extends "header.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+  .action-buttons {
+    margin-top: 15px;
+}
+
+    .btn-cart, .btn-wishlist {
+        padding: 8px 15px;
+        font-size: .8rem;
+        border-radius: 50px;
+        text-transform: uppercase;
+        font-weight: bold;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        border: none;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-cart {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .btn-cart:hover {
+        background-color: #218838;
+        transform: scale(1.05);
+        color: white;
+    }
+
+    .btn-wishlist {
+        background-color: #ffc107;
+        color: white;
+        margin-left: 15px;
+    }
+
+    .btn-wishlist:hover {
+        background-color: #e0a800;
+        transform: scale(1.05);
+        color: white;
+    }
+    /* Left side image gallery */
+    .product-image-gallery {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .product-main-image {
+        width: 100%;
+        height: 450px;
+        object-fit: cover;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .product-main-image:hover {
+        
+    }
+
+    .product-thumbnails {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+        margin-top: 15px;
+    }
+
+    .product-thumbnail {
+        width: 121px;
+        height: 121px;
+        margin-right: 10px;
+        cursor: pointer;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        object-fit: cover;
+        transition: transform 0.2s ease;
+    }
+
+    .product-thumbnail:hover {
+        transform: scale(1.1);
+        border-color: #007bff;
+    }
+
+    /* Right side product info */
+    .product-info {
+        padding-left: 20px;
+    }
+
+    .product-title {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .product-category {
+        font-size: 1.2rem;
+        color: #6c757d;
+    }
+
+    /* Animated pricing */
+    .product-price {
+        font-size: 1.8rem;
+        color: #ff4b5c;
+        position: relative;
+        animation: price-fade 1s ease;
+    }
+
+    .highlighted-price {
+        font-size: 1.2rem;
+        text-decoration: line-through;
+        color: #6c757d;
+        margin-left: 15px;
+    }
+
+    @keyframes price-fade {
+        0% { opacity: 0; transform: translateY(-10px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+
+    
+
+    /* Reviews Section */
+    .reviews-section {
+        margin-top: 30px;
+        padding-top: 30px;
+        border-top: 1px solid #ddd;
+    }
+
+    .review {
+        margin-bottom: 20px;
+    }
+
+    .related-products h3 {
+        font-weight: bold;
+        margin-top: 40px;
+        margin-bottom: 20px;
+    }
+
+    .related-products .card img {
+        height: 250px;
+        object-fit: cover;
+    }
+    .custom-description {
+    font-size: 1.2rem;
+    color: #555;
+    line-height: 1.6;
+}
+
+    .custom-description * {
+        font-size: inherit !important;
+        color: inherit !important;
+    }
+    .star-rating {
+        display: inline-flex;
+        cursor: pointer;
+        font-size: 2rem;
+        color: #ddd;
+    }
+
+    .star-rating .star {
+        margin-right: 5px;
+    }
+
+    .star-rating .star:hover,
+    .star-rating .star.selected {
+        color: gold;
+    }
+
+</style>
+
+<div class="container product-detail-container mt-5">
+    <div class="row">
+        <!-- Product Image Gallery (Left side) -->
+        <div class="col-md-5">
+            <div class="product-image-gallery">
+                <img id="mainImage" src="{{ product.images.first.image.url }}" class="product-main-image" alt="Product Image">
+
+                <div class="product-thumbnails mt-3">
+                    {% for image in product.images.all %}
+                    <img src="{{ image.image.url }}" class="product-thumbnail" onclick="changeMainImage('{{ image.image.url }}')">
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Info (Right side) -->
+        <div class="col-md-7 product-info">
+            <h2 class="product-title">{{ product.product_name }}</h2>
+            <p class="product-category">Category: {{ product.category.name }}</p>
+
+            <div class="d-flex align-items-center">
+                <p class="product-price">&#8377;{{ product.product_price|floatformat:0 }}</p>
+                {% if product.highlighted_price %}
+                <p class="highlighted-price">&#8377;{{ product.highlighted_price|floatformat:0 }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Action Buttons (Immediately after price) -->
+            <div class="action-buttons">
+                <a href="{% url 'add-to-cart' product.id%}" class="btn btn-cart">
+                    <i class="fa fa-shopping-cart"></i> Add to Cart
+                </a>
+                <a href="{% url 'add-to-wishlist' product.id%}" class="btn btn-wishlist">
+                    <i class="fa fa-heart"></i> Wishlist
+                </a>
+            </div>
+            
+            <div class="product-description custom-description mt-5">
+                {{ product.description|safe }}
+            </div>
+
+
+            <!-- Action Buttons -->
+        </div>
+    </div>
+
+    <!-- Reviews Section -->
+    <div class="reviews-section">
+        <h3>Customer Reviews</h3>
+
+        <!-- Existing Reviews -->
+        {% for review in reviews %}
+        <div class="review">
+            <strong>{{ review.user.fname }} {{ review.user.lname }}</strong>
+            <small>({{ review.created_at|date:"M d, Y" }})</small>
+            <p>{{ review.content }}</p>
+            <p>Rating: {{ review.rating }} / 5</p>
+        </div>
+        <hr>
+        {% endfor %}
+
+<!-- Error Message -->
+{% if error_message %}
+<div class="alert alert-danger">{{ error_message }}</div>
+{% endif %}
+
+<!-- Review Submission -->
+{% if user.is_authenticated %}
+<form method="POST" id="reviewForm">
+    {% csrf_token %}
+    
+    <div class="form-group">
+        <label for="content">Your Review</label>
+        <textarea id="content" name="content" class="form-control" rows="3" required></textarea>
+    </div>
+
+    <!-- Star Rating -->
+    <div class="star-rating">
+        <span class="star" data-value="1">&#9733;</span>
+        <span class="star" data-value="2">&#9733;</span>
+        <span class="star" data-value="3">&#9733;</span>
+        <span class="star" data-value="4">&#9733;</span>
+        <span class="star" data-value="5">&#9733;</span>
+    </div>
+
+    <!-- Hidden Rating Input -->
+    <input type="hidden" id="rating" name="rating" value="">
+
+    <button type="submit" class="btn btn-primary mt-3" style="display: block;">Submit Review</button>
+</form>
+{% else %}
+<p>You need to <a style="color:blue;text-decoration: none; font-weight:bold;" href="{% url 'login' %}">login</a> to submit a review.</p>
+{% endif %}
+    </div>
+
+    <!-- Related Products Section -->
+    <div class="related-products">
+        <h3>Related Products</h3>
+        <div class="row">
+            {% for related_product in related_products %}
+            <div class="col-md-3 mb-4">
+                <div class="card">
+                    <img src="{% if related_product.featured_image %}{{ related_product.featured_image.image.url }}{% else %}{% static 'img/placeholder.jpg' %}{% endif %}" class="card-img-top" alt="Related Product Image">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">{{ related_product.product_name }}</h5>
+                        <p class="card-text text-danger">&#8377;{{ related_product.product_price|floatformat:0 }}</p>
+                        <a href="" class="btn btn-primary">View Details</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script>
+    // JavaScript to switch the main image on thumbnail click
+    function changeMainImage(newSrc) {
+        document.getElementById('mainImage').src = newSrc;
+    }
+</script>
+<script>
+    // Handle star rating click
+    const stars = document.querySelectorAll('.star');
+    const ratingInput = document.getElementById('rating');
+
+    stars.forEach(star => {
+        star.addEventListener('click', function() {
+            // Get the selected rating value
+            const ratingValue = this.getAttribute('data-value');
+            
+            // Set all stars to default color first
+            stars.forEach(s => s.classList.remove('selected'));
+            
+            // Highlight selected stars
+            for (let i = 0; i < ratingValue; i++) {
+                stars[i].classList.add('selected');
+            }
+            
+            // Set the hidden rating input value
+            ratingInput.value = ratingValue;
+        });
+    });
+</script>
+
+{% endblock %}

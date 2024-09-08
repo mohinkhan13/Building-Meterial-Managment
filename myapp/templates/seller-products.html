@@ -1,0 +1,72 @@
+{% extends "seller-header.html" %}
+{% load static%}
+{% block content %}
+<style type="text/css">
+    
+.product-card {
+        position: relative;
+        border: 1px solid #ddd;
+        border-radius: 0.5rem;
+        overflow: hidden;
+        background: #fff;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .product-card img {
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+    }
+
+</style>
+<div class="container mt-3 py-3">
+    <div class="row mb-3">
+        <div class="col text-center">
+            <a href="{% url 'seller-add-product' %}" class="btn btn-primary w-25">Add Product</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 col-sm-12">
+            <h1 class="mb-4">All Products</h1>
+        </div>
+        <div class="col-md-6 col-sm-12">
+            <div class="text-end">
+                <a class="btn btn-success" href="?status=published" class="filter-link {% if current_status == 'published' %}active{% endif %}">
+                    Published ({{ published_count }})
+                </a>
+                <a class="btn btn-secondary" href="?status=draft" class="filter-link {% if current_status == 'draft' %}active{% endif %}">
+                    Draft ({{ draft_count }})
+                </a>
+                <a class="btn btn-primary" href="?" class="filter-link {% if not current_status %}active{% endif %}">
+                    All ({{ total_count }})
+                </a>
+    </div>
+        </div>
+    </div>      
+    
+    <div class="row">
+        {% for p in products %}
+        <div class="col-md-3 mb-4">
+            <div class="product-card position-relative">                
+                <span class="badge badge-left position-absolute">{{ p.category|upper }}</span>
+                {% if p.status != 'draft' %}
+                <span class="badge badge-right position-absolute" style="background-color: green;">{{ p.status|upper }}</span>
+                {% else %}
+                <span class="badge badge-right position-absolute">{{ p.status|upper }}</span>
+                {% endif %}
+                <img src="{% if p.featured_image %}{{ p.featured_image.image.url }}{% else %}{% static 'img/hero_3.jpg' %}{% endif %}" alt="Product Image" class="card-img-top" style="height:280px;object-fit: cover;">
+                <div class="card-body p-2">
+                    <h5 class="card-title">{{ p.product_name }}</h5>
+                    <p class="price text-danger">&#8377;{{ p.product_price|floatformat:0 }} <s class="text-secondary">{{ p.highlighted_price }}</s></p>
+                    {% if p.status != 'draft' %}
+                    <a href="#" class="btn btn-primary">View</a>
+                    {% else%}
+                    <a href="{% url 'seller-product-publish' p.id %}" class="btn btn-success">Publish</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>  
+        {% endfor %}      
+    </div>
+</div>
+{% endblock %}

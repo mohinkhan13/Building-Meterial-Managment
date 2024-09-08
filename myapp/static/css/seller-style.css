@@ -1,0 +1,121 @@
+
+.badge {
+    padding: 0.5rem 1rem;
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: #fff;
+    border-radius: 0.25rem;
+}
+
+.badge-left {
+    top: 1rem;
+    left: 1rem;
+    background-color: #007bff; 
+}
+
+.badge-right {
+    top: 1rem;
+    right: 1rem;
+    background-color: #dc3545;
+}
+
+.position-absolute {
+    position: absolute;
+}
+.main-container {
+    margin-top: 50px;
+}
+.product-form {
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    transition: transform 0.3s ease;
+}        
+.form-label {
+    font-weight: bold;
+    color: #333;
+}
+.form-control {
+    border-radius: 8px ;
+    border-color: #d1d1d1;
+}
+.form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+}
+.btn-custom {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: white;
+    padding: 10px 30px;
+    border-radius: 50px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+.btn-custom:hover {
+    background-color: #0056b3;
+    box-shadow: 0px 5px 15px rgba(0, 91, 187, 0.4);
+}
+.upload-area {
+    padding: 20px;
+    border: 2px dashed #d1d1d1;
+    text-align: center;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+.upload-area.dragging {
+    background-color: #f8f9fa;
+    border-color: #007bff;
+}
+.upload-area input[type="file"] {
+    display: none;
+}
+.upload-area p {
+    color: #777;
+}
+.preview-container {
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.preview-container img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+}
+.tag-container {
+    border: 1px solid #d1d1d1;
+    padding: 10px;
+    border-radius: 8px;
+    min-height: 50px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+.tag-container .tag {
+    background-color: #007bff;
+    color: white;
+    border-radius: 5px;
+    padding: 5px 10px;
+    font-size: 14px;
+}
+.tag-container .tag .remove-tag {
+    margin-left: 8px;
+    cursor: pointer;
+}
+.section-title {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+}
+@media (max-width: 768px) {
+    .btn-custom {
+        width: 100%;
+    }
+}

@@ -1,0 +1,133 @@
+{% extends "seller-header.html" %}
+{% load static%}
+{% block content %}
+    <style>
+        body {
+            background-color: #edf2f7;
+            font-family: 'Arial', sans-serif;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container main-container mb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="product-form">
+                <h3 class="section-title">Add a New Product</h3>
+                <form id="productForm" method="POST" action="{% url 'seller-add-product' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <!-- Product Details -->
+                    <div class="mb-4">
+                        <label for="productName" class="form-label">Product Name</label>
+                        <input type="text" class="form-control" name="product_name" id="productName" placeholder="Enter product name">
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label for="tags" class="form-label">Price</label>
+                                <input type="text" id="" name="product_price" class="form-control" placeholder="Enter Price">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="price" class="form-label">Higlighted Price</label>
+                            <input type="number" name="highlighted_price" class="form-control" id="price" placeholder="Enter Higlighted price">
+                        </div>
+                    </div>
+
+                    <!-- Tags Section -->
+                    <div class="mb-4">
+                        <label for="category" class="form-label">Category</label>
+                        <select class="form-select" id="category" name="category">
+                            <option selected>Select category</option>
+                            {% for c in categories%}
+                                <option value="{{c.name}}">{{c.name | upper}}</option>
+                            {% endfor%}
+                        </select>                       
+                    </div>
+
+                    <!-- Upload Area -->
+                    <div class="upload-area mb-4" id="uploadArea">
+                        <input type="file" name="product_image" id="productImage" multiple>
+                        <p>Drag & Drop Product Images or Click to Upload</p>
+                    </div>
+
+                    <!-- Image Preview Section -->
+                    <div class="preview-container" id="previewContainer"></div>
+
+                    <!-- Description -->
+                    <div class="mb-4">
+                        <label for="description" class="form-label">Product Description</label>
+                        <textarea class="form-control" name="description" id="description" rows="10"></textarea>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label for="status" class="form-label">Status</label>
+                            <select class="form-select" name="status" id="status">
+                                <option value="draft">Draft</option>
+                                <option value="published">Published</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="d-flex justify-content-center">
+                        <button type="submit" class="btn btn-success w-100">Add Product</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/tinymce@6.8.2/tinymce.min.js"></script>
+<script>
+    // Initialize TinyMCE editor
+    tinymce.init({
+        selector: '#description',
+        plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table paste code help wordcount',
+        toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help',
+        menubar: false,
+        height: 300,
+    });
+    // Handle Drag and Drop for Image Upload with Preview
+    const uploadArea = document.getElementById('uploadArea');
+    const productImage = document.getElementById('productImage');
+    const previewContainer = document.getElementById('previewContainer');
+
+    uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.classList.add('dragging');
+    });
+
+    uploadArea.addEventListener('dragleave', () => {
+        uploadArea.classList.remove('dragging');
+    });
+
+    uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.classList.remove('dragging');
+        handleFiles(e.dataTransfer.files);
+    });
+
+    uploadArea.addEventListener('click', () => {
+        productImage.click();
+    });
+
+    productImage.addEventListener('change', () => {
+        handleFiles(productImage.files);
+    });
+
+    function handleFiles(files) {
+        previewContainer.innerHTML = ''; // Clear previous previews
+        Array.from(files).forEach(file => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                previewContainer.appendChild(img);
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+</script>
+{% endblock %}

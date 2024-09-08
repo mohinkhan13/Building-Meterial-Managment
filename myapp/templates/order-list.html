@@ -1,0 +1,41 @@
+{% extends 'header.html' %}
+{% load static %}
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">My Orders</h2>
+    {% if orders %}
+        <table class="table table-hover">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Order ID</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Total Amount</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td>{{ order.id }}</td>
+                    <td>{{ order.created_at|date:"d M, Y H:i" }}</td>
+                    <td>₹{{ order.total_amount }}</td>
+                    <td>
+                        {% if order.status == 'paid' %}
+                            <span class="bg-success text-white px-3 py-1 ">{{order.status |upper}}</span>
+                        {% else %}
+                            <span class="bg-danger text-white px-3 py-1 ">{{order.status |upper}}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'order_detail' order.id %}" class="btn btn-primary btn-sm">View Details</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="text-center">You have no orders.</p>
+    {% endif %}
+</div>
+{% endblock %}

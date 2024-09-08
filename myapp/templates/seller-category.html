@@ -1,0 +1,57 @@
+{% extends "seller-header.html" %}
+{% load static%}
+{% block content %}
+    <style>
+        body {
+            background-color: #edf2f7;
+            font-family: 'Arial', sans-serif;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container main-container mb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="product-form">
+                <h3 class="section-title">Add Category</h3>
+                <form id="productForm" method="POST" action="{% url 'category' %}">
+                    {% csrf_token %}
+                    <!-- Product Details -->
+                    <div class="mb-4">
+                        <label for="productName" class="form-label">Category Name</label>
+                        <input type="text" class="form-control" name="category" id="" placeholder="Enter Category name">
+                        {% if message %}
+                        <p class="mt-2 text-danger">{{message}}</p>
+                        {% endif%}
+                    </div>  
+                    <div class="d-flex justify-content-center">
+                        <button type="submit" class="btn btn-success">Add Category</button>
+                    </div>          
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-center mt-5">
+        <div class="col-lg-4">
+            <div class="product-form">
+                <h3 class="section-title">All Category</h3>
+                <table class="table table-striped table-hover">
+                    <thead class="text-center">
+                        <th>Sr</th>
+                        <th>Category</th>
+                    </thead>
+                    <tbody class="text-center">
+                        {% for c in categories %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ c.name | upper}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
