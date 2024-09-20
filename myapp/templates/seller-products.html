@@ -19,8 +19,8 @@
     }
 
 </style>
-<div class="container mt-3 py-3">
-    <div class="row mb-3">
+<div class="container mt-5 py-3">
+    <div class="row mb-3 mt-5">
         <div class="col text-center">
             <a href="{% url 'seller-add-product' %}" class="btn btn-primary w-25">Add Product</a>
         </div>
@@ -59,7 +59,7 @@
                     <h5 class="card-title">{{ p.product_name }}</h5>
                     <p class="price text-danger">&#8377;{{ p.product_price|floatformat:0 }} <s class="text-secondary">{{ p.highlighted_price }}</s></p>
                     {% if p.status != 'draft' %}
-                    <a href="#" class="btn btn-primary">View</a>
+                    <a href="{% url 'seller-edit-product' p.id %}" class="btn btn-primary">View</a>
                     {% else%}
                     <a href="{% url 'seller-product-publish' p.id %}" class="btn btn-success">Publish</a>
                     {% endif %}

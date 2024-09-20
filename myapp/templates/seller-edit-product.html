@@ -1,0 +1,158 @@
+{% extends "seller-header.html" %}
+{% load static %}
+{% block content %}
+    <style>
+        body {
+            background-color: #edf2f7;
+            font-family: 'Arial', sans-serif;
+        }
+    </style>
+
+<div class="container main-container mb-5 mt-5 py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="product-form">
+                <h3 class="section-title">Edit Product</h3>
+                <form id="productForm" method="POST" action="{% url 'seller-edit-product' product.id %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <!-- Product Details -->
+                    <div class="mb-4">
+                        <label for="productName" class="form-label">Product Name</label>
+                        <input type="text" class="form-control" name="product_name" id="productName" placeholder="Enter product name" value="{{ product.product_name }}">
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label for="productPrice" class="form-label">Price</label>
+                            <input type="text" id="productPrice" name="product_price" class="form-control" placeholder="Enter Price" value="{{ product.product_price }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="highlightedPrice" class="form-label">Highlighted Price</label>
+                            <input type="number" name="highlighted_price" class="form-control" id="highlightedPrice" placeholder="Enter Highlighted Price" value="{{ product.highlighted_price }}">
+                        </div>
+                    </div>
+
+                    <!-- Category Selection -->
+                    <div class="mb-4">
+                        <label for="category" class="form-label">Category</label>
+                        <select class="form-select" id="category" name="category">
+                            <option value="" disabled {% if not product.category %}selected{% endif %}>Select category</option>
+                            {% for c in categories %}
+                                <option value="{{ c.name }}" {% if product.category == c.name %}selected{% endif %}>{{ c.name | upper }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Product Images -->
+                    <div class="mb-4">
+                        <label for="productImages" class="form-label">Product Images</label>
+                        
+                        <!-- Main Image Display -->
+                        <div class="main-image mb-3">
+                            <img id="mainImage" src="{{ product.images.first.image.url }}" class="img-fluid" alt="Main Product Image">
+                        </div>
+                        
+                        <!-- Thumbnails -->
+                        <div class="thumbnail-container d-flex flex-wrap">
+                            {% for image in product.images.all %}
+                                <img src="{{ image.image.url }}" class="product-thumbnail" 
+                                     onclick="changeMainImage('{{ image.image.url }}')" 
+                                     style="width: 100px; height: 100px; object-fit: cover; margin: 5px; cursor: pointer;" 
+                                     alt="Product Thumbnail">
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="upload-area mb-4" id="uploadArea">
+                        <input type="file" name="product_image" id="productImage" multiple>
+                        <p>Drag & Drop Product Images or Click to Upload</p>
+                    </div>
+
+                    <!-- Image Preview Section -->
+                    <div class="preview-container" id="previewContainer"></div>
+
+                    <!-- Description -->
+                    <div class="mb-4">
+                        <label for="description" class="form-label">Product Description</label>
+                        <textarea class="form-control" name="description" id="description" rows="10">{{ product.description }}</textarea>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label for="status" class="form-label">Status</label>
+                            <select class="form-select" name="status" id="status">
+                                <option value="draft" {% if product.status == 'draft' %}selected{% endif %}>Draft</option>
+                                <option value="published" {% if product.status == 'published' %}selected{% endif %}>Published</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="d-flex justify-content-center">
+                        <button type="submit" class="btn btn-success w-100">Update Product</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/tinymce@6.8.2/tinymce.min.js"></script>
+<script>
+    // Initialize TinyMCE editor
+    tinymce.init({
+        selector: '#description',
+        plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table paste code help wordcount',
+        toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help',
+        menubar: false,
+        height: 300,
+    });
+
+    // Handle Drag and Drop for Image Upload with Preview
+    const uploadArea = document.getElementById('uploadArea');
+    const productImage = document.getElementById('productImage');
+    const previewContainer = document.getElementById('previewContainer');
+
+    uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.classList.add('dragging');
+    });
+
+    uploadArea.addEventListener('dragleave', () => {
+        uploadArea.classList.remove('dragging');
+    });
+
+    uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.classList.remove('dragging');
+        handleFiles(e.dataTransfer.files);
+    });
+
+    uploadArea.addEventListener('click', () => {
+        productImage.click();
+    });
+
+    productImage.addEventListener('change', () => {
+        handleFiles(productImage.files);
+    });
+
+    function handleFiles(files) {
+        previewContainer.innerHTML = ''; // Clear previous previews
+        Array.from(files).forEach(file => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                previewContainer.appendChild(img);
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+</script>
+<script>
+    function changeMainImage(imageUrl) {
+        const mainImage = document.getElementById('mainImage');
+        mainImage.src = imageUrl;
+    }
+</script>
+
+{% endblock %}

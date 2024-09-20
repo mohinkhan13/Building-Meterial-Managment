@@ -26,12 +26,13 @@ urlpatterns = [
     path('cancel.html/', cancel,name='cancel'),
     path('order/<int:order_id>/', order_detail, name='order_detail'),
     path('order-list/', order_list,name='order-list'),
-
+    path('contact/', contact_us, name='contact'),  # Add this line
 
 
     # Seller URLS
 
     path('seller-add-product/', seller_add_product, name='seller-add-product'),
+    path('seller-edit-product/<int:id>/', seller_edit_product, name='seller-edit-product'),
     path('category/', category, name='category'),
     path('seller-product-publish/<int:id>', seller_product_publish, name='seller-product-publish'),
 

@@ -170,7 +170,7 @@
 
 </style>
 
-<div class="container product-detail-container mt-5">
+<div class="container product-detail-container mt-5 py-5">
     <div class="row">
         <!-- Product Image Gallery (Left side) -->
         <div class="col-md-5">
@@ -271,14 +271,16 @@
         <div class="row">
             {% for related_product in related_products %}
             <div class="col-md-3 mb-4">
+                <a style="text-decoration: none;" href="{% url 'product-view' related_product.id %}">
                 <div class="card">
                     <img src="{% if related_product.featured_image %}{{ related_product.featured_image.image.url }}{% else %}{% static 'img/placeholder.jpg' %}{% endif %}" class="card-img-top" alt="Related Product Image">
                     <div class="card-body text-center">
                         <h5 class="card-title">{{ related_product.product_name }}</h5>
                         <p class="card-text text-danger">&#8377;{{ related_product.product_price|floatformat:0 }}</p>
-                        <a href="" class="btn btn-primary">View Details</a>
+                        <a href="{% url 'product-view' related_product.id %}" class="btn btn-primary">View Details</a>
                     </div>
                 </div>
+            </a>
             </div>
             {% endfor %}
         </div>

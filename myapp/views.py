@@ -378,6 +378,39 @@ def seller_add_product(request):
     categories = Category.objects.all()
     return render(request, 'seller-add-product.html', {'categories': categories})
 
+def seller_edit_product(request, id):
+    product = Product.objects.get(id=id)
+    imgs = ProductImage.objects.filter(product=product)
+    categories = Category.objects.all()
+    if request.method == 'POST':
+        product_name = request.POST.get('product_name')
+        product_price = request.POST.get('product_price')
+        highlighted_price = request.POST.get('highlighted_price')
+        category = request.POST.get('category')
+        description = request.POST.get('description')
+        status = request.POST.get('status')
+
+        # Update product fields
+        product.product_name = product_name
+        product.product_price = product_price
+        product.highlighted_price = highlighted_price
+        product.category = Category.objects.get(name=category) if category else product.category
+        product.description = description
+        product.status = status
+        product.save()  # Save updated product details
+
+        # Handle multiple image uploads
+        images = request.FILES.getlist('product_image')
+        if images:  # Check if any new images were uploaded
+            for image in images:
+                ProductImage.objects.create(product=product, image=image)  # Create new image records
+
+        return render(request, 'seller-edit-product.html', {'imgs': imgs, 'product': product, 'categories': categories})
+
+    
+    return render(request, 'seller-edit-product.html', {'imgs': imgs, 'product': product, 'categories': categories})
+
+
 
 def category(request):
     if request.method == 'POST':
@@ -408,7 +441,7 @@ def seller_product_publish(request,id):
 
 def product_view(request, id):
     product = Product.objects.get(id=id)
-    related_products = Product.objects.filter(category=product.category).exclude(id=id)[:4]
+    related_products = Product.objects.filter(category=product.category,status='published').exclude(id=id)[:4]
     reviews = product.reviews.all()
     error_message = None
     
@@ -456,7 +489,7 @@ def wishlist(request):
 
     wishlist = Wishlist.objects.filter(user=user)
     request.session['wishlist_count']=len(wishlist)
-    return render(request,'wishlist.html',{'wishlist_items':wishlist_items})
+    return render(request,'wishlist.html',{'wishlist_items':wishlist})
 
 def add_to_wishlist(request,id):
     try:
@@ -661,3 +694,18 @@ def order_detail(request,order_id):
     user = User.objects.get(email=request.session['email'])
     order = Order.objects.get(id=order_id)
     return render(request,'order-detail.html', {'order':order})
+
+def contact_us(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        subject = request.POST.get('subject')
+        message = request.POST.get('message')
+
+        # Create a new contact message
+        ContactMessage.objects.create(name=name, email=email, subject=subject, message=message)
+
+        messages.success(request, 'Your message has been sent successfully!')
+        return redirect('contact')  # Redirect to the contact page or another page
+    else:
+        return render(request, 'contact.html')  # Render the contact form template
